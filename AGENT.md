@@ -16,6 +16,18 @@ RankFuse is a pip-installable Python library that adds hybrid (dense + sparse) r
 6. `06-CODING_STYLE.md` — how the code must be written
 7. `04-IMPLEMENTATION_PLAN.md` — the phased task list to execute
 
+## Source Reference Project
+
+The original Retryv project — the working RAG pipeline this library generalizes retrieval logic from (hybrid dense+sparse search, RRF fusion, reranking; the source of the 23%→84% recall improvement referenced throughout the docs) — is located at:
+
+```
+F:\Retryv
+```
+
+Use this only as a **reference**, not something to copy-paste from. When a phase in `04-IMPLEMENTATION_PLAN.md` says "Port from Retryv," it means: read the relevant logic there, understand the approach, then reimplement it generalized and config-driven per `02-ARCHITECTURE.md` and `06-CODING_STYLE.md` — not lift the code as-is. Retryv's code is tightly coupled to its own hardcoded paths/keys/dataset; none of that should carry over.
+
+Phases where this applies: Phase 2 (Chroma store), Phase 3 (BM25 index), Phase 4 (RRF fusion), Phase 6 (rerankers).
+
 ## Non-Negotiable Rules
 
 1. **Follow `06-CODING_STYLE.md` on every single line.** Simple, readable, human-sounding code. No over-abstraction, no defensive-coding-everywhere, no comment-per-line, no generic naming (`data`, `handler`, `manager`). This is the single most important rule in this file — re-check it before marking anything done.
