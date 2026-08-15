@@ -1,0 +1,1 @@
+# Sparse search index implementations
