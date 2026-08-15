@@ -65,3 +65,6 @@ venv.bak/
 # OS-specific files
 .DS_Store
 Thumbs.db
+AGENT.md
+.agents/
+context/
