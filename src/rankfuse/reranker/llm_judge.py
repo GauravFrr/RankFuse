@@ -15,7 +15,7 @@ class RelevanceScore(BaseModel):
 class LLMJudgeReranker(Reranker):
     """Reranker implementation using Gemini as an LLM relevance judge."""
 
-    def __init__(self, api_key: str, model_name: str = "gemini-2.5-flash"):
+    def __init__(self, api_key: str, model_name: str = "gemini-flash-latest"):
         self.api_key = api_key
         self.model_name = model_name
 
