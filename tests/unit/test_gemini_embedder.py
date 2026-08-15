@@ -24,7 +24,7 @@ def test_gemini_embedder_success():
         results = embedder.embed(["hello", "world"])
 
         mock_client.models.embed_content.assert_called_once_with(
-            model="text-embedding-004", contents=["hello", "world"]
+            model="gemini-embedding-001", contents=["hello", "world"]
         )
 
         assert results == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
@@ -44,7 +44,7 @@ def test_gemini_embedder_single_flat_list_handling():
         results = embedder.embed(["hello"])
 
         mock_client.models.embed_content.assert_called_once_with(
-            model="text-embedding-004", contents=["hello"]
+            model="gemini-embedding-001", contents=["hello"]
         )
 
         assert results == [[0.1, 0.2, 0.3]]

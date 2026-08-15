@@ -7,7 +7,7 @@ from rankfuse.exceptions import EmbeddingError
 class GeminiEmbedder(Embedder):
     """Embedder implementation using the modern Google GenAI SDK."""
 
-    def __init__(self, api_key: str, model_name: str = "text-embedding-004"):
+    def __init__(self, api_key: str, model_name: str = "gemini-embedding-001"):
         self.api_key = api_key
         self.model_name = model_name
 
