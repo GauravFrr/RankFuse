@@ -46,11 +46,13 @@ class VectorStore(ABC):
         pass
 
     @abstractmethod
-    def get(self, ids: list[str]) -> list[dict]:
+    def get(self, ids: list[str] | None = None) -> list[dict]:
         """Retrieve documents and their metadata by their IDs.
 
+        If ids is None, retrieves all documents.
+
         Args:
-            ids: A list of document IDs.
+            ids: Optional list of document IDs.
 
         Returns:
             A list of dicts, where each dict contains 'id', 'text', and 'metadata'.

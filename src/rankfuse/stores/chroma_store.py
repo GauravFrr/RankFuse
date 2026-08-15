@@ -75,11 +75,15 @@ class ChromaStore(VectorStore):
         except Exception as e:
             raise StoreError(f"Failed to delete documents from ChromaStore: {e}")
 
-    def get(self, ids: list[str]) -> list[dict]:
-        if not ids:
-            return []
+    def get(self, ids: list[str] | None = None) -> list[dict]:
         try:
-            results = self.collection.get(ids=ids, include=["documents", "metadatas"])
+            if ids is not None:
+                results = self.collection.get(
+                    ids=ids, include=["documents", "metadatas"]
+                )
+            else:
+                results = self.collection.get(include=["documents", "metadatas"])
+
             retrieved = []
             if results and results.get("ids"):
                 for doc_id, doc_text, meta in zip(

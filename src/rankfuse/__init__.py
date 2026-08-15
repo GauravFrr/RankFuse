@@ -8,9 +8,11 @@ from rankfuse.exceptions import (
     StoreError,
 )
 from rankfuse.reranker.base import Reranker, RetrievalResult
+from rankfuse.retriever import Retriever
 from rankfuse.stores.base import VectorStore
 
 __all__ = [
+    "Retriever",
     "RetrieverConfig",
     "RetrievalResult",
     "Embedder",
