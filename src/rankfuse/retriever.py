@@ -87,7 +87,9 @@ class Retriever:
                 metadatas=all_metadatas,
             )
 
-        # Rebuild the BM25 index over all chunks currently in vector store
+        # Rebuild the BM25 index over all chunks currently in vector store.
+        # NOTE: Rebuilding the full BM25 index on every ingest() call is a v1
+        # limitation where ingest cost grows with the total corpus size over time.
         all_stored = self.vector_store.get()
         bm25_docs = [{"id": item["id"], "text": item["text"]} for item in all_stored]
         self.sparse_index.build(bm25_docs)
@@ -118,13 +120,17 @@ class Retriever:
 
         # 3. Reciprocal Rank Fusion (RRF)
         fused_results = reciprocal_rank_fusion(
-            dense_results, sparse_results, k=self.config.rrf_k
+            dense_results,
+            sparse_results,
+            k=self.config.rrf_k,
+            dense_weight=self.config.dense_weight,
+            sparse_weight=self.config.sparse_weight,
         )
 
         if not fused_results:
             return []
 
-        # 4. Fetch document texts and metadata for fused candidate IDs
+        # 4. Fetch document texts and metadata for all fused candidate chunk IDs
         fused_ids = [doc_id for doc_id, _ in fused_results]
         fused_details = self.vector_store.get(fused_ids)
         details_map = {item["id"]: item for item in fused_details}
@@ -145,9 +151,22 @@ class Retriever:
 
         # 5. Two-stage reranking
         if self.reranker is not None:
-            return self.reranker.rerank(query, candidates, top_k=final_top_k)
+            # Rerank all candidate chunks first
+            reranked = self.reranker.rerank(query, candidates, top_k=len(candidates))
+        else:
+            reranked = candidates
 
-        return candidates[:final_top_k]
+        # 6. Deduplicate by doc_id after reranking (keeping highest-scoring chunk per document)
+        final_results = []
+        seen_doc_ids = set()
+        for res in reranked:
+            if res.doc_id not in seen_doc_ids:
+                seen_doc_ids.add(res.doc_id)
+                final_results.append(res)
+                if len(final_results) == final_top_k:
+                    break
+
+        return final_results
 
     def delete(self, ids: list[str]) -> None:
         """Delete documents and their chunks from indexes by original document IDs.
@@ -169,7 +188,9 @@ class Retriever:
         if chunk_ids_to_delete:
             self.vector_store.delete(chunk_ids_to_delete)
 
-            # Rebuild sparse index over remaining documents
+            # Rebuild sparse index over remaining documents.
+            # NOTE: Rebuilding the full BM25 index on every delete() call is a v1
+            # limitation where delete cost grows with the total corpus size over time.
             remaining_stored = self.vector_store.get()
             bm25_docs = [
                 {"id": item["id"], "text": item["text"]} for item in remaining_stored

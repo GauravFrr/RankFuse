@@ -7,7 +7,7 @@ from rankfuse.reranker.base import Reranker, RetrievalResult
 class CrossEncoderReranker(Reranker):
     """Local Cross-Encoder reranker using sentence-transformers."""
 
-    def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"):
+    def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-12-v2"):
         self.model_name = model_name
         self._model = None
 
@@ -40,7 +40,21 @@ class CrossEncoderReranker(Reranker):
             return []
 
         try:
-            pairs = [(query, c.text) for c in candidates]
+            pairs = []
+            for c in candidates:
+                # Retrieve human-readable context from metadata if available
+                context = ""
+                if c.metadata:
+                    for key in ["title", "source"]:
+                        val = c.metadata.get(key)
+                        if val:
+                            context = f"Document Title: {val}\n"
+                            break
+                
+                # Graceful fallback: use raw text if no metadata title/source exists
+                passage = f"{context}Content: {c.text}" if context else c.text
+                pairs.append((query, passage))
+
             scores = self.model.predict(pairs)
 
             reranked = []

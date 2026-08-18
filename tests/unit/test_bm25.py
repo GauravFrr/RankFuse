@@ -56,3 +56,13 @@ def test_bm25_index_persistence(temp_dir):
     results = index2.query("Java", top_k=5)
     assert len(results) == 1
     assert results[0][0] == "doc2"
+
+
+def test_bm25_index_filters_stopwords(temp_dir):
+    index = BM25Index(persist_dir=temp_dir)
+    documents = [
+        {"id": "doc1", "text": "to be or not to be that is the question."}
+    ]
+    index.build(documents)
+    # Querying for only stopwords should return empty results
+    assert index.query("to be or", top_k=5) == []

@@ -83,3 +83,26 @@ def test_llm_judge_reranker_mocked():
 def test_llm_judge_reranker_empty():
     reranker = LLMJudgeReranker(api_key="test-key")
     assert reranker.rerank("query", [], top_k=5) == []
+
+
+def test_cross_encoder_reranker_handles_missing_metadata():
+    reranker = CrossEncoderReranker(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
+    
+    query = "python programming language"
+    c1 = RetrievalResult(
+        doc_id="doc1",
+        text="Python is a general-purpose programming language commonly used in AI.",
+        score=0.1,
+        metadata=None,  # No metadata dict at all
+    )
+    c2 = RetrievalResult(
+        doc_id="doc2",
+        text="The domestic cat is a small carnivorous mammal.",
+        score=0.2,
+        metadata={},  # Empty metadata dict
+    )
+    
+    results = reranker.rerank(query, [c2, c1], top_k=2)
+    assert len(results) == 2
+    assert results[0].doc_id == "doc1"
+    assert results[0].score > -10.0

@@ -86,3 +86,44 @@ def test_retriever_e2e_flow(temp_dir):
         results_after = retriever.search("python programming", top_k=2)
         doc_ids = [r.doc_id for r in results_after]
         assert "python_doc" not in doc_ids
+
+
+def test_retriever_deduplication(temp_dir):
+    config = RetrieverConfig(
+        api_key="test-api-key",
+        persist_dir=temp_dir,
+        chunk_size=30,  # small chunks to force splitting
+        chunk_overlap=5,
+        dense_top_k=5,
+        sparse_top_k=5,
+        rerank_top_k=5,
+        rrf_k=60,
+        reranker_type="none",
+    )
+
+    with patch("google.genai.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.models.embed_content.side_effect = mock_embed_content
+        mock_client_cls.return_value = mock_client
+
+        retriever = Retriever(config)
+
+        # Ingest a long python document that splits into 3 chunks
+        retriever.ingest(
+            [
+                {
+                    "id": "long_python_doc",
+                    "text": "Python is a language. Python is ML. Python is fun.",
+                    "metadata": {"category": "coding"},
+                }
+            ]
+        )
+
+        # Search for "python"
+        results = retriever.search("python", top_k=5)
+
+        # Verify only one result for long_python_doc is returned
+        doc_ids = [r.doc_id for r in results]
+        assert len(doc_ids) == 1
+        assert doc_ids[0] == "long_python_doc"
+

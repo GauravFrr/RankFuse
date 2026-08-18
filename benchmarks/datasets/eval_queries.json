@@ -1,0 +1,152 @@
+[
+  {
+    "id": "lifespan-events",
+    "query": "how do lifespan events work in FastAPI",
+    "relevant_source": "advanced/events.md"
+  },
+  {
+    "id": "path-parameters",
+    "query": "how to add path parameters in FastAPI",
+    "relevant_source": "tutorial/path-params.md"
+  },
+  {
+    "id": "dependency-injection",
+    "query": "what is dependency injection in FastAPI",
+    "relevant_source": "tutorial/dependencies/index.md"
+  },
+  {
+    "id": "pydantic-models",
+    "query": "how to use pydantic models with FastAPI",
+    "relevant_source": "tutorial/body.md"
+  },
+  {
+    "id": "json-response",
+    "query": "how to return JSON responses in FastAPI",
+    "relevant_source": "tutorial/response-model.md"
+  },
+  {
+    "id": "api-router",
+    "query": "what is the purpose of APIRouter",
+    "relevant_source": "tutorial/bigger-applications.md"
+  },
+  {
+    "id": "http-exceptions",
+    "query": "how to handle HTTP exceptions in FastAPI",
+    "relevant_source": "tutorial/handling-errors.md"
+  },
+  {
+    "id": "request-body-validation",
+    "query": "how to add request body validation",
+    "relevant_source": "tutorial/body.md"
+  },
+  {
+    "id": "background-tasks",
+    "query": "how does background tasks work in FastAPI",
+    "relevant_source": "tutorial/background-tasks.md"
+  },
+  {
+    "id": "oauth2-password-flow",
+    "query": "how to use OAuth2 with password flow",
+    "relevant_source": "tutorial/security/oauth2-jwt.md"
+  },
+  {
+    "id": "cors-middleware",
+    "query": "how to add CORS middleware in FastAPI",
+    "relevant_source": "tutorial/cors.md"
+  },
+  {
+    "id": "async-path-operations",
+    "query": "how to write async path operation functions",
+    "relevant_source": "async.md"
+  },
+  {
+    "id": "test-client",
+    "query": "what is the testclient used for in FastAPI",
+    "relevant_source": "tutorial/testing.md"
+  },
+  {
+    "id": "query-params-defaults",
+    "query": "how to declare query parameters with default values",
+    "relevant_source": "tutorial/query-params.md"
+  },
+  {
+    "id": "response-model-filter",
+    "query": "how to use response_model to filter output fields",
+    "relevant_source": "tutorial/response-model.md"
+  },
+  {
+    "id": "query-param-validation-field",
+    "query": "how to add string validation to query parameters",
+    "relevant_source": "tutorial/query-params-str-validations.md"
+  },
+  {
+    "id": "custom-response-class",
+    "query": "how to return HTML or custom response types in FastAPI",
+    "relevant_source": "advanced/custom-response.md"
+  },
+  {
+    "id": "cookie-parameters",
+    "query": "how to declare cookie parameters in FastAPI",
+    "relevant_source": "tutorial/cookie-params.md"
+  },
+  {
+    "id": "header-parameters",
+    "query": "how to read request headers in FastAPI",
+    "relevant_source": "tutorial/header-params.md"
+  },
+  {
+    "id": "file-uploads-bytes",
+    "query": "how to handle file uploads in FastAPI",
+    "relevant_source": "tutorial/request-files.md"
+  },
+  {
+    "id": "lifespan-with-background-tasks",
+    "query": "how to use lifespan events and background tasks together in a FastAPI application",
+    "relevant_source": "advanced/events.md"
+  },
+  {
+    "id": "oauth2-custom-exception-handler",
+    "query": "how to customize error responses when OAuth2 token validation fails in FastAPI",
+    "relevant_source": "tutorial/security/oauth2-jwt.md"
+  },
+  {
+    "id": "dependencies-with-yield-and-db-session",
+    "query": "how to manage database sessions using dependency injection with yield and error handling",
+    "relevant_source": "tutorial/dependencies/dependencies-with-yield.md"
+  },
+  {
+    "id": "apirouter-tags-and-security-dependencies",
+    "query": "how to apply global authentication dependencies and OpenAPI tags to an APIRouter",
+    "relevant_source": "tutorial/bigger-applications.md"
+  },
+  {
+    "id": "pydantic-custom-validation-and-status-codes",
+    "query": "how do Pydantic request body validation errors turn into HTTP 422 responses and how to override them",
+    "relevant_source": "tutorial/body.md"
+  },
+  {
+    "id": "cors-and-security-headers",
+    "query": "how to configure CORS middleware alongside OAuth2 authorization header requirements",
+    "relevant_source": "tutorial/cors.md"
+  },
+  {
+    "id": "background-tasks-with-db-dependency",
+    "query": "how to pass database models or state from route dependencies into background tasks",
+    "relevant_source": "tutorial/background-tasks.md"
+  },
+  {
+    "id": "sub-dependencies-auth-scopes",
+    "query": "how to create a hierarchy of security dependencies using sub-dependencies in FastAPI",
+    "relevant_source": "tutorial/dependencies/sub-dependencies.md"
+  },
+  {
+    "id": "middleware-vs-dependencies-timing",
+    "query": "what is the difference in execution order between HTTP middleware and route dependencies",
+    "relevant_source": "tutorial/middleware.md"
+  },
+  {
+    "id": "custom-request-validation-and-response-model",
+    "query": "how to use response_model together with custom Field validation in input request bodies",
+    "relevant_source": "tutorial/body-fields.md"
+  }
+]

@@ -48,7 +48,7 @@ class GeminiEmbedder(Embedder):
 
             # Handle case where response might be flat for a single text input
             if len(texts) == 1 and isinstance(embeddings[0], (int, float)):
-                return [embeddings]
+                embeddings = [embeddings]
 
             return embeddings
         except Exception as e:

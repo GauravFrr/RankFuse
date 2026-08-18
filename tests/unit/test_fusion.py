@@ -42,3 +42,23 @@ def test_rrf_empty_inputs():
     # Empty inputs should return empty lists gracefully
     assert reciprocal_rank_fusion([], []) == []
     assert reciprocal_rank_fusion([("doc1", 0.9)], []) == [("doc1", 1 / 61)]
+
+
+def test_rrf_with_custom_weights():
+    # Dense results (ranks: doc1=1)
+    dense_results = [("doc1", 0.95)]
+    # Sparse results (ranks: doc2=1)
+    sparse_results = [("doc2", 12.5)]
+    
+    # Using unequal weights: dense = 2.0, sparse = 0.5
+    fused = reciprocal_rank_fusion(
+        dense_results, sparse_results, k=60, dense_weight=2.0, sparse_weight=0.5
+    )
+    
+    # Expected scores:
+    # doc1 score = 2.0 * (1 / 61) = 0.032787
+    # doc2 score = 0.5 * (1 / 61) = 0.008197
+    assert fused[0][0] == "doc1"
+    assert fused[1][0] == "doc2"
+    assert fused[0][1] == pytest.approx(2.0 / 61)
+    assert fused[1][1] == pytest.approx(0.5 / 61)

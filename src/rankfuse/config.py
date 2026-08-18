@@ -26,6 +26,8 @@ class RetrieverConfig(BaseSettings):
     sparse_top_k: int = 20
     rerank_top_k: int = 5
     rrf_k: int = 60
+    dense_weight: float = 1.0
+    sparse_weight: float = 1.0
 
     @model_validator(mode="after")
     def validate_config(self) -> "RetrieverConfig":
@@ -39,6 +41,8 @@ class RetrieverConfig(BaseSettings):
             raise ConfigError("top_k search parameters must be positive integers.")
         if self.rrf_k <= 0:
             raise ConfigError("rrf_k must be a positive integer.")
+        if self.dense_weight < 0.0 or self.sparse_weight < 0.0:
+            raise ConfigError("dense_weight and sparse_weight must be non-negative floats.")
 
         # API key validation
         if not self.api_key:

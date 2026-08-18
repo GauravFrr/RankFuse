@@ -61,6 +61,9 @@ venv.bak/
 /rankfuse_index/
 /my_index/
 /tmp/
+/*_index/
+/chroma_db_eval/
+/repro_test_index_run_*/
 
 # OS-specific files
 .DS_Store
