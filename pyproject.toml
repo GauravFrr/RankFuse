@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Hybrid retrieval (dense + sparse + RRF fusion + reranking) for RAG pipelines"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
     { name = "RankFuse Authors" }
 ]
@@ -17,7 +17,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
