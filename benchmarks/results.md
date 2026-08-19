@@ -78,3 +78,9 @@ Using a general-domain Cross-Encoder (`ms-marco-MiniLM-L-12-v2`) degrades perfor
 The **Gemini LLM-Judge (`gemini-3.5-flash-lite`)** achieves a Recall@5 of 0.9000 (matching all other conditions) but scores **0.4000 Recall@1** (12/30 queries correct) on the standard equal-weight parameters.
 * **Corpus/Genre Limitation:** Documents like `release-notes.md` represent a known hard case for keyword-based sparse search because they list dozens of feature updates in close proximity. This naturally pushes them to the top of the sparse candidate list, polluting the initial candidate pool passed to the LLM-Judge.
 * **Recall Depth Tradeoff:** Limiting the reranking pool to 5 unique documents to control API request volume structurally disadvantages the LLM-Judge at higher recall levels ($k=5$). In production scenarios, users can expand this pool (e.g., to 10 candidates) to match the reranking depth of the Cross-Encoder, at the cost of doubling their LLM API request volume.
+
+---
+
+## Future Work
+
+The current evaluation uses a single-relevant-document-per-query design with document-level deduplication, which is appropriate for simple lookup queries but underrepresents queries that genuinely require multiple source documents to answer (e.g., "how to manage database sessions using dependency injection with yield and error handling" requires both `dependencies-with-yield.md` and `handling-errors.md`). A natural v0.2 extension would adopt a chunk-level, multi-relevant-doc evaluation design — measuring whether all required source documents appear anywhere in the top-K retrieved chunks — which would more directly demonstrate where hybrid search and reranking outperform dense-only retrieval on compositional, multi-hop queries. This design mirrors the evaluation used in the original Retryv project from which RankFuse's retrieval architecture was generalized.
