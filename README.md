@@ -10,6 +10,14 @@ Plug it in with two method calls — `ingest()` and `search()` — and your pipe
 pip install rankfuse
 ```
 
+Lightweight install (~20MB): pulls in `chromadb`, `rank-bm25`, `google-genai`, and `pydantic`. No PyTorch or GPU binaries. Uses Gemini for embeddings and the optional LLM-judge reranker.
+
+To use the local cross-encoder reranker (adds `sentence-transformers` + PyTorch, ~1-2GB on first use):
+
+```bash
+pip install rankfuse[cross-encoder]
+```
+
 Requires Python 3.10+. You'll need a [Gemini API key](https://aistudio.google.com/app/apikey) for embeddings.
 
 ## Quickstart

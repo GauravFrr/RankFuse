@@ -1,10 +1,22 @@
+import importlib.util
+import pytest
 from unittest.mock import MagicMock, patch
 
 from rankfuse.reranker.base import RetrievalResult
-from rankfuse.reranker.cross_encoder import CrossEncoderReranker
 from rankfuse.reranker.llm_judge import LLMJudgeReranker
 
+# Lightweight availability check — does NOT import sentence_transformers
+_cross_encoder_available = importlib.util.find_spec("sentence_transformers") is not None
+skip_cross_encoder = pytest.mark.skipif(
+    not _cross_encoder_available,
+    reason="cross-encoder extra not installed (pip install rankfuse[cross-encoder])",
+)
 
+if _cross_encoder_available:
+    from rankfuse.reranker.cross_encoder import CrossEncoderReranker
+
+
+@skip_cross_encoder
 def test_cross_encoder_reranker_real():
     # Use standard small MS-MARCO model
     reranker = CrossEncoderReranker(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
@@ -32,6 +44,7 @@ def test_cross_encoder_reranker_real():
     assert results[0].score > -10.0
 
 
+@skip_cross_encoder
 def test_cross_encoder_reranker_empty():
     reranker = CrossEncoderReranker(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
     assert reranker.rerank("query", [], top_k=5) == []
@@ -85,6 +98,7 @@ def test_llm_judge_reranker_empty():
     assert reranker.rerank("query", [], top_k=5) == []
 
 
+@skip_cross_encoder
 def test_cross_encoder_reranker_handles_missing_metadata():
     reranker = CrossEncoderReranker(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
     

@@ -1,22 +1,37 @@
-from sentence_transformers import CrossEncoder
-
 from rankfuse.exceptions import RerankerError
 from rankfuse.reranker.base import Reranker, RetrievalResult
 
 
 class CrossEncoderReranker(Reranker):
-    """Local Cross-Encoder reranker using sentence-transformers."""
+    """Local Cross-Encoder reranker using sentence-transformers.
+
+    Requires the cross-encoder extra:
+        pip install rankfuse[cross-encoder]
+    """
 
     def __init__(self, model_name: str = "cross-encoder/ms-marco-MiniLM-L-12-v2"):
+        try:
+            from sentence_transformers import CrossEncoder  # noqa: F401
+        except ImportError:
+            raise ImportError(
+                "CrossEncoderReranker requires the 'cross-encoder' extra. "
+                "Install it with: pip install rankfuse[cross-encoder]"
+            )
         self.model_name = model_name
         self._model = None
 
     @property
-    def model(self) -> CrossEncoder:
-        """Lazily initialize the CrossEncoder model."""
+    def model(self):
+        """Lazily initialize the CrossEncoder model on first rerank call."""
         if self._model is None:
             try:
+                from sentence_transformers import CrossEncoder
                 self._model = CrossEncoder(self.model_name)
+            except ImportError:
+                raise ImportError(
+                    "CrossEncoderReranker requires the 'cross-encoder' extra. "
+                    "Install it with: pip install rankfuse[cross-encoder]"
+                )
             except Exception as e:
                 raise RerankerError(
                     f"Failed to load CrossEncoder model '{self.model_name}': {e}"

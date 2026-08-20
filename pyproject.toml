@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rankfuse"
-version = "0.1.0"
+version = "0.1.1"
 description = "Hybrid retrieval (dense + sparse + RRF fusion + reranking) for RAG pipelines"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,18 +22,21 @@ classifiers = [
 dependencies = [
     "chromadb>=0.4.0",
     "rank-bm25>=0.2.2",
-    "sentence-transformers>=2.2.2",
     "google-genai>=0.1.0",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
 ]
 
 [project.optional-dependencies]
+cross-encoder = [
+    "sentence-transformers>=2.2.2",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
     "black>=23.0.0",
+    "sentence-transformers>=2.2.2",  # needed for cross-encoder tests
 ]
 
 [tool.setuptools.packages.find]
