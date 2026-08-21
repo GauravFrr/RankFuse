@@ -1,22 +1,22 @@
-import os
-import sys
 import json
+import os
 import shutil
-import time
+import sys
 import threading
-import concurrent.futures
-import requests
-import re
+import time
+
 from dotenv import load_dotenv
 
 # Ensure project root is in sys.path when running from benchmarks/
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from google import genai
+
 from rankfuse.config import RetrieverConfig
-from rankfuse.retriever import Retriever
 from rankfuse.embeddings.gemini_embedder import GeminiEmbedder
 from rankfuse.exceptions import EmbeddingError
-from google import genai
+from rankfuse.retriever import Retriever
+
 
 class RotatingGeminiEmbedder(GeminiEmbedder):
     """Benchmark helper to handle free tier rate limits via key rotation and caching."""
@@ -26,7 +26,7 @@ class RotatingGeminiEmbedder(GeminiEmbedder):
         self.key_idx = 0
         self.client = genai.Client(api_key=self.api_keys[self.key_idx])
         self._lock = threading.Lock()
-        
+
         # Load persistent cache
         self.cache_file = os.path.join("benchmarks", "embeddings_cache.json")
         self.cache = {}
@@ -44,22 +44,22 @@ class RotatingGeminiEmbedder(GeminiEmbedder):
             with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(self.cache, f)
             os.replace(temp_file, self.cache_file)
-        except Exception as e:
+        except Exception:
             pass
 
     def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
-        
+
         # Fast path for single text caching
         if len(texts) == 1 and texts[0] in self.cache:
             return [self.cache[texts[0]]]
-            
+
         batch_size = 100
         all_embeddings = []
         for i in range(0, len(texts), batch_size):
             batch = texts[i : i + batch_size]
-            
+
             # Check cache for elements in batch
             batch_to_embed = []
             cached_map = {}
@@ -68,7 +68,7 @@ class RotatingGeminiEmbedder(GeminiEmbedder):
                     cached_map[t] = self.cache[t]
                 else:
                     batch_to_embed.append(t)
-            
+
             embeddings = []
             if batch_to_embed:
                 # Sleep 4.5 seconds between batches to stay under IP-based RPM limits
@@ -92,7 +92,7 @@ class RotatingGeminiEmbedder(GeminiEmbedder):
                             should_rotate = True
                         elif any(p in err_str for p in ["429", "resource_exhausted", "403", "permission_denied", "suspended", "api key", "unauthorized"]):
                             should_rotate = True
-                            
+
                         if should_rotate and attempts < max_attempts - 1:
                             attempts += 1
                             self.key_idx = (self.key_idx + 1) % len(self.api_keys)
@@ -131,14 +131,16 @@ class RotatingGeminiEmbedder(GeminiEmbedder):
                 else:
                     batch_embeddings.append(embeddings[embed_idx])
                     embed_idx += 1
-            
+
             all_embeddings.extend(batch_embeddings)
         return all_embeddings
 
-from rankfuse.reranker.llm_judge import LLMJudgeReranker, RelevanceScore
-from rankfuse.reranker.base import RetrievalResult
 from google.genai import types
+
 from rankfuse.exceptions import RerankerError
+from rankfuse.reranker.base import RetrievalResult
+from rankfuse.reranker.llm_judge import LLMJudgeReranker, RelevanceScore
+
 
 class RotatingLLMJudgeReranker(LLMJudgeReranker):
     """Benchmark helper to handle LLM judge requests using Gemini with key rotation and candidate dedup."""
@@ -163,7 +165,7 @@ class RotatingLLMJudgeReranker(LLMJudgeReranker):
 
         # Rerank at most top-5 candidates to be token-efficient
         candidates_to_eval = unique_candidates[:5]
-        
+
         try:
             reranked = []
             for c in candidates_to_eval:
@@ -175,7 +177,7 @@ class RotatingLLMJudgeReranker(LLMJudgeReranker):
                 )
 
                 time.sleep(0.4) # Brief pause to help respect rate limits
-                
+
                 response = None
                 max_attempts = len(self.api_keys) * 3
                 attempts = 0
@@ -194,12 +196,12 @@ class RotatingLLMJudgeReranker(LLMJudgeReranker):
                     except Exception as e:
                         err_str = str(e).lower()
                         status_code = getattr(e, "status_code", None)
-                        
+
                         # Handle rate limit (429) or temporary service unavailable (503)
                         should_rotate = (status_code in (403, 429, 503))
                         if not should_rotate:
                             should_rotate = any(p in err_str for p in ["429", "resource_exhausted", "403", "permission_denied", "suspended", "api key", "unauthorized", "503", "unavailable", "high demand"])
-                            
+
                         if should_rotate and attempts < max_attempts - 1:
                             attempts += 1
                             self.key_idx = (self.key_idx + 1) % len(self.api_keys)
@@ -241,12 +243,12 @@ def main():
     if not os.environ.get("GEMINI_API_KEY"):
         # Fallback to Retryv .env if running on user machine
         load_dotenv(r"F:\Retryv\.env")
-        
+
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         print("ERROR: GEMINI_API_KEY is not set in environment or F:\\Retryv\\.env")
         sys.exit(1)
-        
+
     # Pass all keys if comma-separated to support rotation
     pass
 
@@ -256,7 +258,7 @@ def main():
     dataset_dir = os.path.join("benchmarks", "datasets", "fastapi_docs")
     queries_file = os.path.join("benchmarks", "datasets", "eval_queries.json")
     persist_dir = "./benchmark_index"
-    
+
     # Cleanup previous index if any
     shutil.rmtree(persist_dir, ignore_errors=True)
 
@@ -323,21 +325,21 @@ def main():
     rrf_recalls = {1: 0, 3: 0, 5: 0}
     pipeline_recalls = {1: 0, 3: 0, 5: 0}
     llm_recalls = {1: 0, 3: 0, 5: 0}
-    
+
     print("\nEvaluating queries...")
     for idx, eq in enumerate(eval_queries):
         query_text = eq["query"]
         ground_truth = eq["relevant_source"]
-        
+
         # --- Baseline: Naive Dense-only ---
         query_emb = retriever.embedder.embed([query_text])[0]
         dense_results = retriever.vector_store.query(query_emb, top_k=20)
-        
+
         # Deduplicate dense results at document level
         dense_ids = [doc_id for doc_id, _ in dense_results]
         fused_details = retriever.vector_store.get(dense_ids)
         details_map = {item["id"]: item for item in fused_details}
-        
+
         dense_docs = []
         seen_dense = set()
         for doc_id, _ in dense_results:
@@ -347,7 +349,7 @@ def main():
                 if orig_id not in seen_dense:
                     seen_dense.add(orig_id)
                     dense_docs.append(orig_id)
-        
+
         # --- Condition 2: Hybrid RRF only (No Rerank) ---
         original_reranker = retriever.reranker
         retriever.reranker = None
@@ -358,13 +360,13 @@ def main():
         # --- Condition 3: Full RankFuse Pipeline (Hybrid RRF + Cross-Encoder) ---
         pipeline_results = retriever.search(query_text, top_k=5)
         pipeline_docs = [r.doc_id for r in pipeline_results]
-        
+
         # --- Condition 4: RankFuse Pipeline (LLM Judge) ---
         retriever.reranker = llm_reranker
         llm_results = retriever.search(query_text, top_k=5)
         llm_docs = [r.doc_id for r in llm_results]
         retriever.reranker = original_reranker
-        
+
         # Compute recalls
         for k in [1, 3, 5]:
             if ground_truth in dense_docs[:k]:
@@ -375,7 +377,7 @@ def main():
                 pipeline_recalls[k] += 1
             if ground_truth in llm_docs[:k]:
                 llm_recalls[k] += 1
-                
+
         # print progress
         print(f"[{idx+1}/{len(eval_queries)}] Query: '{query_text}'")
         print(f"  Ground Truth: {ground_truth}")

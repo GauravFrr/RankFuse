@@ -65,7 +65,7 @@ class CrossEncoderReranker(Reranker):
                         if val:
                             context = f"Document Title: {val}\n"
                             break
-                
+
                 # Graceful fallback: use raw text if no metadata title/source exists
                 passage = f"{context}Content: {c.text}" if context else c.text
                 pairs.append((query, passage))
