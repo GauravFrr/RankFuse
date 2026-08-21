@@ -156,7 +156,7 @@ class Retriever:
         else:
             reranked = candidates
 
-        # 6. Deduplicate by doc_id after reranking (keeping highest-scoring chunk per document)
+        # 6. Deduplicate by doc_id (keep highest-scoring chunk per document)
         final_results = []
         seen_doc_ids = set()
         for res in reranked:

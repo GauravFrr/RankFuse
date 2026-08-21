@@ -42,7 +42,9 @@ class RetrieverConfig(BaseSettings):
         if self.rrf_k <= 0:
             raise ConfigError("rrf_k must be a positive integer.")
         if self.dense_weight < 0.0 or self.sparse_weight < 0.0:
-            raise ConfigError("dense_weight and sparse_weight must be non-negative floats.")
+            raise ConfigError(
+                "dense_weight and sparse_weight must be non-negative floats."
+            )
 
         # API key validation
         if not self.api_key:
