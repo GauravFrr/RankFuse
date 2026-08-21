@@ -49,12 +49,12 @@ def test_rrf_with_custom_weights():
     dense_results = [("doc1", 0.95)]
     # Sparse results (ranks: doc2=1)
     sparse_results = [("doc2", 12.5)]
-    
+
     # Using unequal weights: dense = 2.0, sparse = 0.5
     fused = reciprocal_rank_fusion(
         dense_results, sparse_results, k=60, dense_weight=2.0, sparse_weight=0.5
     )
-    
+
     # Expected scores:
     # doc1 score = 2.0 * (1 / 61) = 0.032787
     # doc2 score = 0.5 * (1 / 61) = 0.008197

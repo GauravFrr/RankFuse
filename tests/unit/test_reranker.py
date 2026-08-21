@@ -1,6 +1,7 @@
 import importlib.util
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from rankfuse.reranker.base import RetrievalResult
 from rankfuse.reranker.llm_judge import LLMJudgeReranker
@@ -13,7 +14,7 @@ skip_cross_encoder = pytest.mark.skipif(
 )
 
 if _cross_encoder_available:
-    from rankfuse.reranker.cross_encoder import CrossEncoderReranker
+    from rankfuse.reranker.cross_encoder import CrossEncoderReranker  # noqa: E402
 
 
 @skip_cross_encoder
@@ -101,7 +102,7 @@ def test_llm_judge_reranker_empty():
 @skip_cross_encoder
 def test_cross_encoder_reranker_handles_missing_metadata():
     reranker = CrossEncoderReranker(model_name="cross-encoder/ms-marco-MiniLM-L-6-v2")
-    
+
     query = "python programming language"
     c1 = RetrievalResult(
         doc_id="doc1",
@@ -115,7 +116,7 @@ def test_cross_encoder_reranker_handles_missing_metadata():
         score=0.2,
         metadata={},  # Empty metadata dict
     )
-    
+
     results = reranker.rerank(query, [c2, c1], top_k=2)
     assert len(results) == 2
     assert results[0].doc_id == "doc1"
