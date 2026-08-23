@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rankfuse"
-version = "0.1.1"
+version = "0.1.2"
 description = "Hybrid retrieval (dense + sparse + RRF fusion + reranking) for RAG pipelines"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,13 +12,19 @@ license = "MIT"
 authors = [
     { name = "RankFuse Authors" }
 ]
+keywords = ["rag", "retrieval", "hybrid-search", "rrf", "reciprocal-rank-fusion", "vector-search", "bm25", "reranking", "chromadb", "llm"]
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Indexing",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
 ]
+
 dependencies = [
     "chromadb>=0.4.0",
     "rank-bm25>=0.2.2",
@@ -26,6 +32,12 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/GauravFrr/RankFuse"
+Repository = "https://github.com/GauravFrr/RankFuse.git"
+Issues = "https://github.com/GauravFrr/RankFuse/issues"
+Documentation = "https://github.com/GauravFrr/RankFuse#readme"
 
 [project.optional-dependencies]
 cross-encoder = [
