@@ -1,6 +1,25 @@
-# RankFuse
+<div align="center">
+  <img src="assets/banner.svg" alt="RankFuse Banner" width="450" />
 
-Hybrid retrieval (dense + sparse + RRF fusion + optional reranking) for RAG pipelines.
+  <p><strong>Hybrid retrieval (dense + sparse + RRF fusion + optional reranking) for RAG pipelines.</strong></p>
+
+  <p>
+    <a href="https://pypi.org/project/rankfuse/"><img src="https://img.shields.io/pypi/v/rankfuse" alt="PyPI version" /></a>
+    <a href="https://pypi.org/project/rankfuse/"><img src="https://img.shields.io/pypi/pyversions/rankfuse" alt="Python versions" /></a>
+    <a href="https://github.com/GauravFrr/RankFuse/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/rankfuse" alt="License" /></a>
+    <a href="https://github.com/GauravFrr/RankFuse/actions/workflows/test.yml"><img src="https://github.com/GauravFrr/RankFuse/actions/workflows/test.yml/badge.svg" alt="Test Status" /></a>
+  </p>
+
+  <p>
+    <a href="docs/architecture.md">Docs</a> •
+    <a href="docs/api_reference.md">API Reference</a> •
+    <a href="benchmarks/results.md">Benchmark</a> •
+    <a href="https://pypi.org/project/rankfuse/">PyPI</a> •
+    <a href="https://github.com/GauravFrr/RankFuse/issues">Issues</a>
+  </p>
+</div>
+
+---
 
 Plug it in with two method calls — `ingest()` and `search()` — and your pipeline gets keyword-aware hybrid search with Reciprocal Rank Fusion on top of your existing dense embeddings.
 

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" width="100%" height="100%">
+  <defs>
+    <!-- Gradients for the abstract logo shapes -->
+    <linearGradient id="grad-dense" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" /> <!-- Indigo -->
+      <stop offset="100%" stop-color="#7C3AED" /> <!-- Violet -->
+    </linearGradient>
+    <linearGradient id="grad-sparse" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EC4899" /> <!-- Pink -->
+      <stop offset="100%" stop-color="#F59E0B" /> <!-- Amber -->
+    </linearGradient>
+    <linearGradient id="grad-text" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#EC4899" />
+    </linearGradient>
+    
+    <!-- Dark/Light theme adaptive styles -->
+    <style>
+      .text-rank {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 54px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+      }
+      .text-fuse {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 54px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        fill: url(#grad-text);
+      }
+      @media (prefers-color-scheme: dark) {
+        .text-rank {
+          fill: #F9FAFB;
+        }
+      }
+      @media (prefers-color-scheme: light) {
+        .text-rank {
+          fill: #111827;
+        }
+      }
+    </style>
+  </defs>
+
+  <!-- Abstract converging/fusing logo shapes -->
+  <g transform="translate(10, 0)">
+    <!-- Dense search shape (left loop/pillow) -->
+    <path d="M 50,75 C 50,50 75,35 100,55 C 115,67 120,83 100,95 C 75,115 50,100 50,75 Z" 
+          fill="url(#grad-dense)" 
+          opacity="0.85" />
+    
+    <!-- Sparse search shape (right loop/pillow) -->
+    <path d="M 125,75 C 125,100 100,115 75,95 C 60,83 55,67 75,55 C 100,35 125,50 125,75 Z" 
+          fill="url(#grad-sparse)" 
+          opacity="0.85" 
+          style="mix-blend-mode: screen;" />
+
+    <!-- Center intersection accent -->
+    <circle cx="87.5" cy="75" r="14" fill="#FFFFFF" opacity="0.9" />
+    <circle cx="87.5" cy="75" r="7" fill="#4F46E5" />
+  </g>
+
+  <!-- Wordmark text -->
+  <text x="170" y="93" class="text-rank">Rank</text>
+  <text x="296" y="93" class="text-fuse">Fuse</text>
+</svg>
