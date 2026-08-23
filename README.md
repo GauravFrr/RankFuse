@@ -1,13 +1,20 @@
 <div align="center">
-  <img src="assets/banner.svg" alt="RankFuse Banner" width="450" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg">
+    <img alt="RankFuse Banner" src="assets/banner-light.svg" width="450">
+  </picture>
 
   <p><strong>Hybrid retrieval (dense + sparse + RRF fusion + optional reranking) for RAG pipelines.</strong></p>
+  
+  <p>Most RAG setups search with dense embeddings alone. RankFuse adds keyword-aware hybrid search without pulling in a full framework.</p>
 
   <p>
     <a href="https://pypi.org/project/rankfuse/"><img src="https://img.shields.io/pypi/v/rankfuse" alt="PyPI version" /></a>
     <a href="https://pypi.org/project/rankfuse/"><img src="https://img.shields.io/pypi/pyversions/rankfuse" alt="Python versions" /></a>
     <a href="https://github.com/GauravFrr/RankFuse/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/rankfuse" alt="License" /></a>
     <a href="https://github.com/GauravFrr/RankFuse/actions/workflows/test.yml"><img src="https://github.com/GauravFrr/RankFuse/actions/workflows/test.yml/badge.svg" alt="Test Status" /></a>
+    <a href="https://pypi.org/project/rankfuse/"><img src="https://img.shields.io/pypi/dm/rankfuse" alt="Downloads" /></a>
   </p>
 
   <p>
@@ -46,6 +53,7 @@
     <li><a href="#-benchmark">📊 Benchmark</a></li>
     <li><a href="#-swap-in-your-own-embedder-or-store">🔌 Swap in your own embedder or store</a></li>
     <li><a href="#-docs">📚 Docs</a></li>
+    <li><a href="#-contributing">🤝 Contributing</a></li>
     <li><a href="#-license">📄 License</a></li>
   </ul>
 </details>
@@ -106,6 +114,20 @@ GEMINI_API_KEY=your-key python examples/quickstart.py
 
 ## 🔍 What it does
 
+```mermaid
+graph LR
+    Query[Query] --> Dense[Dense Search]
+    Query --> Sparse[Sparse Search BM25]
+    Dense --> RRF[RRF Fusion]
+    Sparse --> RRF
+    RRF --> Rerank{Reranker?}
+    Rerank -- None --> Results[Ranked Results]
+    Rerank -- Active --> Model[Reranking Pass]
+    Model --> Results
+    style Query fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Results fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+```
+
 Standard RAG pipelines search with dense embeddings only. Dense embeddings are good at semantic similarity but miss exact keyword matches — a query for `"RFC 7231"` won't reliably surface a document that only contains the literal text `"RFC 7231"` unless the embedding space happens to capture it.
 
 RankFuse adds a BM25 sparse index alongside the dense index, runs both in parallel, and merges the results using Reciprocal Rank Fusion (RRF). RRF works on rank position rather than raw scores, so it doesn't require normalization between the two score scales — it's simple and robust.
@@ -158,6 +180,12 @@ See [`examples/custom_embedder.py`](examples/custom_embedder.py) for a full work
 - [API Reference](docs/api_reference.md) — full config fields and method signatures
 - [Benchmark Results](benchmarks/results.md) — methodology and findings
 - [FastAPI integration example](examples/fastapi_integration.py)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions of all kinds! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for local development setup guide, test execution instructions, and code submission guidelines. Feel free to open issues or submit Pull Requests.
 
 ---
 
