@@ -21,9 +21,38 @@
 
 ---
 
-Plug it in with two method calls — `ingest()` and `search()` — and your pipeline gets keyword-aware hybrid search with Reciprocal Rank Fusion on top of your existing dense embeddings.
+### Features
 
-## Install
+<table>
+  <tr>
+    <td width="33%"><strong>🔍 Hybrid Search</strong><br>Dense + sparse + RRF fusion for optimal semantic and exact-term retrieval.</td>
+    <td width="33%"><strong>🎯 Pluggable Reranking</strong><br>Precision pass via local cross-encoders, Gemini LLM-judges, or direct RRF output.</td>
+    <td width="33%"><strong>🔌 Swappable Components</strong><br>Bring your own embedding models or vector stores using simple interface overrides.</td>
+  </tr>
+  <tr>
+    <td width="33%"><strong>📦 Lightweight Core</strong><br>Lean ~20MB default install. PyTorch and heavy model dependencies are optional extras.</td>
+    <td width="33%"><strong>🔑 BYOK &amp; Local First</strong><br>Runs directly inside your application process. No extra infrastructure or managed services.</td>
+    <td width="33%"><strong>📊 Honest Benchmarks</strong><br>Honest evaluation details, diagnostic trade-offs, and corpus recall statistics.</td>
+  </tr>
+</table>
+
+<details>
+  <summary><strong>Table of Contents</strong></summary>
+  <ul>
+    <li><a href="#-install">📦 Install</a></li>
+    <li><a href="#-quickstart">🚀 Quickstart</a></li>
+    <li><a href="#-what-it-does">🔍 What it does</a></li>
+    <li><a href="#-reranker-options">🎯 Reranker options</a></li>
+    <li><a href="#-benchmark">📊 Benchmark</a></li>
+    <li><a href="#-swap-in-your-own-embedder-or-store">🔌 Swap in your own embedder or store</a></li>
+    <li><a href="#-docs">📚 Docs</a></li>
+    <li><a href="#-license">📄 License</a></li>
+  </ul>
+</details>
+
+---
+
+## 📦 Install
 
 ```bash
 pip install rankfuse
@@ -39,7 +68,9 @@ pip install rankfuse[cross-encoder]
 
 Requires Python 3.10+. You'll need a [Gemini API key](https://aistudio.google.com/app/apikey) for embeddings.
 
-## Quickstart
+---
+
+## 🚀 Quickstart
 
 ```python
 from rankfuse import Retriever, RetrieverConfig
@@ -71,7 +102,9 @@ Run the full working example:
 GEMINI_API_KEY=your-key python examples/quickstart.py
 ```
 
-## What it does
+---
+
+## 🔍 What it does
 
 Standard RAG pipelines search with dense embeddings only. Dense embeddings are good at semantic similarity but miss exact keyword matches — a query for `"RFC 7231"` won't reliably surface a document that only contains the literal text `"RFC 7231"` unless the embedding space happens to capture it.
 
@@ -79,21 +112,30 @@ RankFuse adds a BM25 sparse index alongside the dense index, runs both in parall
 
 Optionally, a reranker (local cross-encoder or Gemini LLM-judge) does a precision pass over the fused top-N candidates before returning the final results.
 
-## Reranker options
+---
 
-| `reranker_type` | What it uses | Cost |
+## 🎯 Reranker options
+
+| Type (`reranker_type`) | Underlying Model / Method | Operational Cost / Trade-off |
 |---|---|---|
-| `"cross_encoder"` | `ms-marco-MiniLM-L-12-v2` (local, no API) | Free, ~200MB model download on first use |
-| `"llm_judge"` | Gemini (API call per candidate) | API quota cost |
-| `"none"` | No reranking, returns RRF-fused results directly | Free |
+| **`"cross_encoder"`** | `ms-marco-MiniLM-L-12-v2` (Local execution) | **Free** (Offline, triggers one-time ~200MB download) |
+| **`"llm_judge"`** | Gemini Generative API | **API quota cost** (Incurs API request per candidate) |
+| **`"none"`** | RRF output ranking directly | **Free** (No additional overhead, returns fused ranks) |
 
-## Benchmark
+> [!TIP]
+> **Recommendation:** Use `"cross_encoder"` for zero-cost local prototyping and production setups requiring low latency/offline runs. Use `"llm_judge"` for highest precision where rich LLM context is required.
+
+---
+
+## 📊 Benchmark
 
 Evaluated on 30 queries over the full FastAPI documentation corpus (154 documents). Hybrid search with stopword-filtered BM25 closes the candidate recall gap versus dense-only search — hybrid RRF-only matches dense-only at Recall@5 (0.90) while also providing exact-term coverage dense alone misses.
 
 The standard equal-weight RRF configuration doesn't improve Recall@1 on this particular corpus — the release notes document causes keyword concentration that inflates BM25 scores for non-tutorial results. See [`benchmarks/results.md`](benchmarks/results.md) for the full methodology, diagnostic breakdown, and honest discussion of where hybrid search helps and where it doesn't.
 
-## Swap in your own embedder or store
+---
+
+## 🔌 Swap in your own embedder or store
 
 ```python
 from rankfuse.embeddings.base import Embedder
@@ -108,13 +150,23 @@ retriever = Retriever(config, embedder=MyEmbedder())
 
 See [`examples/custom_embedder.py`](examples/custom_embedder.py) for a full working example.
 
-## Docs
+---
+
+## 📚 Docs
 
 - [Architecture](docs/architecture.md) — how the components connect
 - [API Reference](docs/api_reference.md) — full config fields and method signatures
 - [Benchmark Results](benchmarks/results.md) — methodology and findings
 - [FastAPI integration example](examples/fastapi_integration.py)
 
-## License
+---
+
+## 📄 License
 
 MIT
+
+---
+
+<div align="center">
+  <sub>Built by <a href="https://github.com/GauravFrr">Gaurav</a> — generalized from production RAG patterns in <a href="https://github.com/GauravFrr/Retryv">Retryv</a></sub>
+</div>
